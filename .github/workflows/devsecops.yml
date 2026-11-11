@@ -126,9 +126,7 @@ jobs:
           EC2_HOST: ${{ vars.EC2_HOST }}
           EC2_USER: ${{ vars.EC2_USER }}
         run: |
-          # Create the folder just in case
           ssh -i ~/.ssh/id_ec2 -o StrictHostKeyChecking=yes "$EC2_USER@$EC2_HOST" 'mkdir -p ~/expense-tracker'
-          # Pipe the file content directly over SSH. No scp required.
           cat docker-compose.prod.yml | ssh -i ~/.ssh/id_ec2 -o StrictHostKeyChecking=yes "$EC2_USER@$EC2_HOST" 'cat > ~/expense-tracker/docker-compose.prod.yml'
       - name: Deploy images and verify health
         env:
@@ -139,7 +137,6 @@ jobs:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           set -euo pipefail
-          # Token travels over the authenticated, encrypted SSH channel via stdin.
           printf '%s\n' "$DOCKERHUB_TOKEN" | ssh -i ~/.ssh/id_ec2 -o StrictHostKeyChecking=yes \
             "$EC2_USER@$EC2_HOST" "docker login -u '$HUB_USER' --password-stdin"
           ssh -i ~/.ssh/id_ec2 -o StrictHostKeyChecking=yes "$EC2_USER@$EC2_HOST" \
