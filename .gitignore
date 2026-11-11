@@ -1,0 +1,16 @@
+node_modules
+.env
+.DS_Store
+dist
+coverage
+npm-debug.log*
+
+__MACOSX/
+._*
+__pycache__/
+.venv/
+venv/
+*.pem
+*.key
+.env.*
+!.env.example
