@@ -126,8 +126,10 @@ jobs:
           EC2_HOST: ${{ vars.EC2_HOST }}
           EC2_USER: ${{ vars.EC2_USER }}
         run: |
-          ssh -i ~/.ssh/id_ec2 -o StrictHostKeyChecking=yes "$EC2_USER@$EC2_HOST" 'mkdir -p ~/expense-tracker'
-          scp -i ~/.ssh/id_ec2 -o StrictHostKeyChecking=yes docker-compose.prod.yml "$EC2_USER@$EC2_HOST:expense-tracker/docker-compose.prod.yml"
+          # Upload the file to the home directory first
+          scp -i ~/.ssh/id_ec2 -o StrictHostKeyChecking=yes docker-compose.prod.yml "$EC2_USER@$EC2_HOST:~/docker-compose.prod.yml"
+          # Move it into the correct folder
+          ssh -i ~/.ssh/id_ec2 -o StrictHostKeyChecking=yes "$EC2_USER@$EC2_HOST" 'mv ~/docker-compose.prod.yml ~/expense-tracker/docker-compose.prod.yml'
       - name: Deploy images and verify health
         env:
           EC2_HOST: ${{ vars.EC2_HOST }}
